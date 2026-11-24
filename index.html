@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ELMABA Games: cozy puzzle games</title>
+<meta name="description" content="Cozy puzzle games made by one developer. Play free on iPhone and Android.">
+<meta name="theme-color" content="#2b1d14">
+<link rel="icon" href="icons/booksort.png">
+<style>
+  :root {
+    --bg: #2b1d14; --bg2: #1c130d; --card: #fdf4e4; --ink: #3e281c; --muted: #8a6f5c;
+    --radius: 22px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(120% 70% at 50% 0%, #4a2e1e 0%, var(--bg) 55%, var(--bg2) 100%) fixed;
+    color: var(--card);
+    font: 16px/1.4 ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: max(28px, env(safe-area-inset-top)) 18px max(32px, env(safe-area-inset-bottom));
+  }
+  main { max-width: 440px; margin: 0 auto; }
+  header { text-align: center; margin: 8px 0 26px; }
+  h1 { font-size: 30px; letter-spacing: .02em; margin: 0 0 6px; }
+  header p { margin: 0; color: #e8d6bd; opacity: .85; }
+  .game {
+    background: var(--card); color: var(--ink); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 -4px 0 rgba(62,40,28,.12);
+  }
+  .top { display: flex; gap: 14px; align-items: center; }
+  .top img { width: 76px; height: 76px; border-radius: 18px; flex: none; box-shadow: 0 3px 8px rgba(0,0,0,.25); }
+  h2 { font-size: 20px; margin: 0 0 2px; }
+  .sub { margin: 0; color: var(--muted); font-size: 15px; }
+  .buttons { display: flex; gap: 10px; margin-top: 14px; }
+  .buttons a, .buttons span {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; border-radius: 14px; font-weight: 700; font-size: 15px; text-decoration: none;
+    background: var(--accent); color: var(--on-accent); box-shadow: inset 0 -3px 0 rgba(0,0,0,.18);
+  }
+  .buttons a:active { transform: translateY(1px); box-shadow: none; }
+  .buttons .soon { background: #e9dcc6; color: var(--muted); box-shadow: none; font-weight: 600; }
+  .buttons svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
+  .buttons .secondary { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px #e0cfb4; }
+  footer { text-align: center; color: #cdb89c; opacity: .7; font-size: 13px; margin-top: 22px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ELMABA Games</h1>
+    <p>Cozy puzzle games made by one developer.<br>Free on iPhone &amp; Android.</p>
+  </header>
+  <div id="games"></div>
+  <footer>Thanks for playing ♥</footer>
+</main>
+<script>
+// App Store campaign links need the provider token (App Store Connect > App Analytics > Campaigns).
+// Leave it empty until known; the links still work, they just aren't counted per campaign.
+const PROVIDER_TOKEN = "";
+
+// The bio link on each platform carries ?s=tt (TikTok), ?s=ig (Instagram) or ?s=yt (YouTube).
+const SOURCES = { tt: "tiktok", ig: "instagram", yt: "youtube" };
+const src = SOURCES[new URLSearchParams(location.search).get("s")] || "direct";
+
+const GAMES = [
+  { name: "Book Sort", sub: "Thick, heavy & locked shelves", icon: "booksort", accent: "#56964e", text: "#fff",
+    ios: { id: "6828049531", live: false }, android: "com.elmaba.booksort" },
+  { name: "Inspector Hootsdone", sub: "Murder mystery logic puzzles", icon: "hootsdone", accent: "#d6802e", text: "#fff",
+    ios: { id: "6832211544", live: false }, android: "com.elmaba.hootsdone" },
+  { name: "Sky Stackers", sub: "Stack towers, build a city", icon: "skystackers", accent: "#ffc428", text: "#281e14",
+    ios: { id: "6831592412", live: true }, android: "com.elmaba.skystackers" },
+];
+
+const appStore = id => {
+  const q = new URLSearchParams({ mt: "8", ct: src + "_bio" });
+  if (PROVIDER_TOKEN) q.set("pt", PROVIDER_TOKEN);
+  return `https://apps.apple.com/app/apple-store/id${id}?${q}`;
+};
+const play = pkg => {
+  const referrer = new URLSearchParams({ utm_source: src, utm_medium: "social", utm_campaign: "bio" });
+  return `https://play.google.com/store/apps/details?id=${pkg}&referrer=${encodeURIComponent(referrer)}`;
+};
+
+const APPLE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8s2.3-1.3 3.1-2.5c1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1zM13.9 4.9c.7-.9 1.2-2 1.1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.1.1 2.3-.6 3-1.5z"/></svg>';
+const ANDROID = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.2v17.6c0 .4.2.7.5.9l9.6-9.7L4.5 2.3c-.3.2-.5.5-.5.9zm11.4 9.1 2.7 2.7-11.8 6.8 9.1-9.5zm3.9-3.1c.9.5.9 1.8 0 2.4l-2.4 1.4-2.9-2.9 2.9-2.9 2.4 2zM6.3 2.2l11.8 6.8-2.7 2.7-9.1-9.5z"/></svg>';
+
+const ua = navigator.userAgent;
+const onAndroid = /Android/i.test(ua);
+const onApple = /iPhone|iPad|iPod|Macintosh/i.test(ua) && !onAndroid;
+
+const games = document.getElementById("games");
+for (const g of GAMES) {
+  const iosBtn = g.ios.live
+    ? `<a href="${appStore(g.ios.id)}">${APPLE}App Store</a>`
+    : `<span class="soon">${APPLE}iPhone soon</span>`;
+  const playBtn = `<a href="${play(g.android)}">${ANDROID}Google Play</a>`;
+  // Put the visitor's own store first; make the other one quieter.
+  const first = onAndroid ? [playBtn, iosBtn] : [iosBtn, playBtn];
+  const secondary = (onAndroid || onApple) && first[0].startsWith("<a") ?first[1].replace("<a ", '<a class="secondary" ') : first[1];
+  const el = document.createElement("section");
+  el.className = "game";
+  el.style.setProperty("--accent", g.accent);
+  el.style.setProperty("--on-accent", g.text);
+  el.innerHTML = `
+    <div class="top">
+      <img src="icons/${g.icon}.png" alt="" width="76" height="76">
+      <div><h2>${g.name}</h2><p class="sub">${g.sub}</p></div>
+    </div>
+    <div class="buttons">${first[0]}${secondary}</div>`;
+  games.appendChild(el);
+}
+</script>
+</body>
+</html>
